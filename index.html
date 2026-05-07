@@ -1,57 +1,127 @@
-from dataclasses import dataclass
-from datetime import datetime, timedelta
-from typing import List
-
-@dataclass
-class Task:
-    name: str
-    deadline: datetime
-    priority_level: int  # 1 (Highest) to 5 (Lowest)
-    estimated_hours: float
-
-    def calculate_urgency_score(self) -> float:
-        """
-        Calculates a dynamic urgency score. 
-        Lower score = higher urgency for the reshuffle algorithm.
-        """
-        days_remaining = (self.deadline - datetime.now()).total_seconds() / 86400
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stealth Cloaker Pro</title>
+    <style>
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
         
-        # Prevent division by zero and heavily penalize overdue tasks
-        days_remaining = max(days_remaining, 0.1) 
-        
-        # Algorithm balances the static priority level with the approaching deadline
-        # and the time required to complete it.
-        return (self.priority_level * days_remaining) / self.estimated_hours
+        .cloaker-container {
+            background-color: #1e293b;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
 
-class ScheduleManager:
-    def __init__(self):
-        self.tasks: List[Task] = []
+        h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
 
-    def add_task(self, task: Task):
-        self.tasks.append(task)
+        p {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
 
-    def trigger_reshuffle(self) -> List[Task]:
-        """
-        Executes a one-click reshuffle, instantly re-sorting the active queue
-        based on the most current urgency scores.
-        """
-        # Sort tasks in-place based on the calculated score
-        self.tasks.sort(key=lambda task: task.calculate_urgency_score())
-        return self.tasks
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background-color: #0f172a;
+            color: #f8fafc;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
 
-# --- Example Usage ---
-if __name__ == "__main__":
-    manager = ScheduleManager()
-    
-    # Adding sample tasks
-    manager.add_task(Task("Wireframe UI", datetime.now() + timedelta(days=2), 2, 4.0))
-    manager.add_task(Task("Database Schema", datetime.now() + timedelta(days=1), 1, 6.0))
-    manager.add_task(Task("Write Readme", datetime.now() + timedelta(days=7), 4, 1.0))
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
 
-    print("Executing dynamic reshuffle...")
-    optimized_queue = manager.trigger_reshuffle()
+        button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            font-family: inherit;
+            transition: background-color 0.2s;
+        }
 
-    for i, task in enumerate(optimized_queue, 1):
-        print(f"{i}. {task.name} (Deadline: {task.deadline.strftime('%b %d')})")
+        button:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cloaker-container">
+        <h2>Stealth Cloaker Pro</h2>
+        <p>Enter a URL to open in a stealth tab.</p>
+        <input type="text" id="urlInput" placeholder="https://example.com" autocomplete="off">
+        <button onclick="cloakUrl()">Launch Cloaked Tab</button>
+    </div>
+
+    <script>
+        function cloakUrl() {
+            let url = document.getElementById('urlInput').value.trim();
+            
+            if (!url) {
+                alert("Please enter a URL.");
+                return;
+            }
+
+            // Ensure the URL has a protocol
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            
+            // Create a new about:blank window
+            let win = window.open('about:blank', '_blank');
+            
+            if (win) {
+                // Set up the stealth iframe
+                let iframe = win.document.createElement('iframe');
+                iframe.style.width = '100vw';
+                iframe.style.height = '100vh';
+                iframe.style.border = 'none';
+                iframe.style.margin = '0';
+                iframe.style.padding = '0';
+                iframe.src = url;
+                
+                // Remove margins from the new window's body
+                win.document.body.style.margin = '0';
+                win.document.body.style.padding = '0';
+                win.document.body.style.overflow = 'hidden';
+                
+                // Append the iframe
+                win.document.body.appendChild(iframe);
+            } else {
+                alert("Pop-up blocked! Please allow pop-ups for this site to use the cloaker.");
+            }
+        }
+    </script>
+
+</body>
+</html>
 
 
